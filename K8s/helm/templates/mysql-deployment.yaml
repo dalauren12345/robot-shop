@@ -29,11 +29,11 @@ spec:
         - containerPort: 3306
         resources:
           limits:
-            cpu: 200m
-            memory: 1024Mi
+            cpu: {{ .Values.mysql.resources.limits.cpu | default "200m" }}
+            memory: {{ .Values.mysql.resources.limits.memory | default "1024Mi" }}
           requests:
-            cpu: 100m
-            memory: 700Mi
+            cpu: {{ .Values.mysql.resources.requests.cpu | default "100m" }}
+            memory: {{ .Values.mysql.resources.requests.memory | default "700Mi" }}
       restartPolicy: Always
       {{- with .Values.mysql.affinity }}
       affinity:

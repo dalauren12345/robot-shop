@@ -26,11 +26,11 @@ spec:
         # it's Java it needs lots of memory
         resources:
           limits:
-            cpu: 200m
-            memory: 1000Mi
+            cpu: {{ .Values.shipping.resources.limits.cpu | default "200m" }}
+            memory: {{ .Values.shipping.resources.limits.memory | default "1000Mi" }}
           requests:
-            cpu: 100m
-            memory: 500Mi
+            cpu: {{ .Values.shipping.resources.requests.cpu | default "100m" }}
+            memory: {{ .Values.shipping.resources.requests.memory | default "500Mi" }}
         readinessProbe:
           httpGet:
             path: /health
