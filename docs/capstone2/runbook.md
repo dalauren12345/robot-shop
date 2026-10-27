@@ -68,3 +68,22 @@ Create a blameless postmortem for the incident drill.
 
 Documentation prepared. Alerts, dashboards and live procedures must be
 tested after the monitoring stack is deployed.
+
+## Capstone 2 monitoring verification status
+
+Last checked: 27 October 2026.
+
+- Prometheus and Grafana are running in the monitoring namespace.
+- The `RobotShopWebUnavailable` Prometheus alert rule is installed and loaded. Alert firing and notification delivery have not been verified.
+- The Loki service is running and its readiness endpoint responds successfully.
+- Fluent Bit is not fully operational: only 2 of 6 DaemonSet pods were running at the last check. Loki rejected some older log entries with HTTP 400 (`entry too far behind`), and Robot Shop log ingestion has not been confirmed.
+- Some monitoring pods remain Pending because of node-affinity constraints and node pod capacity.
+- The Robot Shop application pods were running at the last check. Recheck application health before making monitoring or infrastructure changes.
+- Distributed tracing and end-to-end Slack alert delivery have not been verified.
+
+### Follow-up actions
+
+1. Investigate why Pending Fluent Bit pods have node affinity that is absent from the DaemonSet template.
+2. Review Loki timestamp acceptance and Fluent Bit log ingestion.
+3. Verify alert firing and notification delivery.
+4. Verify end-to-end distributed tracing.
