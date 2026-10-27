@@ -1,0 +1,70 @@
+mode: deployment
+replicaCount: 1
+
+image:
+  repository: ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector-k8s
+
+command:
+  name: otelcol-k8s
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 128Mi
+  limits:
+    cpu: 200m
+    memory: 256Mi
+
+ports:
+  otlp:
+    enabled: true
+    containerPort: 4317
+    servicePort: 4317
+    protocol: TCP
+  otlp-http:
+    enabled: true
+    containerPort: 4318
+    servicePort: 4318
+    protocol: TCP
+
+config:
+  receivers:
+    otlp:
+      protocols:
+        grpc:
+          endpoint: 0.0.0.0:4317
+        http:
+          endpoint: 0.0.0.0:4318
+
+  processors:
+    memory_limiter:
+      check_interval: 5s
+      limit_percentage: 80
+      spike_limit_percentage: 25
+    batch: {}
+
+  exporters:
+    otlp:
+      endpoint: jaeger.monitoring.svc.cluster.local:4317
+      tls:
+        insecure: true
+    debug:
+      verbosity: basic
+
+  extensions:
+    health_check:
+      endpoint: 0.0.0.0:13133
+
+  service:
+    extensions:
+      - health_check
+    pipelines:
+      traces:
+        receivers:
+          - otlp
+        processors:
+          - memory_limiter
+          - batch
+        exporters:
+          - otlp
+          - debug

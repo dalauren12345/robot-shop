@@ -1,0 +1,17 @@
+config:
+  outputs: |
+    [OUTPUT]
+        Name loki
+        Match kube.*
+        Host loki.monitoring.svc.cluster.local
+        Port 3100
+        Labels job=fluent-bit,source=kubernetes
+        Retry_Limit False
+
+    [OUTPUT]
+        Name loki
+        Match host.*
+        Host loki.monitoring.svc.cluster.local
+        Port 3100
+        Labels job=fluent-bit,source=host
+        Retry_Limit False
