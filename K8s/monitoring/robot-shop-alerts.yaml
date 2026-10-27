@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: robot-shop-availability
+  namespace: monitoring
+  labels:
+    release: prometheus-stack
+spec:
+  groups:
+    - name: robot-shop.availability
+      rules:
+        - alert: RobotShopWebUnavailable
+          expr: kube_deployment_status_replicas_available{namespace="robot-shop",deployment="web"} < 1
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Robot Shop web deployment is unavailable"
+            description: "The Robot Shop web deployment has had fewer than one available replica for 2 minutes."
